@@ -57,3 +57,27 @@
     console.log(firstName);//Mike
     console.log(lastName);//Goldman
 }
+
+//Array Destructuring
+{
+    let names = ["Mike", "John", "Kate", "William"];
+    let [firstPerson, secondPerson, thirdPerson, fourthPerson] = names; //Destructuring
+    let [pickFirst, , , pickLast] = names;
+    console.log(firstPerson, secondPerson, thirdPerson, fourthPerson); //Mike John Kate William
+    console.log(pickFirst, pickLast); //Mike William
+
+    let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let [firstNum, secondNum, ...remainingNums] = numbers;
+    console.log(firstNum, secondNum, remainingNums); //1 2 [3,4,5,6,7,8,9,10]
+
+    function GetColors () {
+        return ["Red", "Green", "Blue"];
+    }
+    let [red, green, blue] = GetColors();
+    let [...colors] = GetColors();
+    console.log(red, green, blue, colors); //Red Green Blue [ 'Red', 'Green', 'Blue' ]
+
+    for(let color of colors) {
+        console.log(color); //for..of loop only if (typeof colors[Symbol.iterator]) is function
+    }
+}
