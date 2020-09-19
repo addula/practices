@@ -1,0 +1,142 @@
+<html>
+    <head>
+        <style>
+            ul {
+                list-style: square;
+            }
+            .container {
+                display: flex;
+                flex-direction: row;
+            }
+            .container > div {
+                padding: 15px;
+                border: 1px solid black;
+            }
+            </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="container2"></div>
+            <div id="container1"></div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        var dataSet = [{
+            id: 4343,
+            data: "fggsdgd",
+            parent: {
+                id: 1111,
+                data: "sadjas",
+                parent: {
+                    id: 1112,
+                    data: "kalksd",
+                   parent: {
+                       id: 1113
+                   }
+                }
+            }   
+        }, {
+            id: 5353,
+            data: "gdfg",
+            parent: null 
+        },{
+            id: 6363,
+            data: "fdsgdf",
+            parent: {
+                id: 4443,
+                data: "ksdla"
+            }   
+        }];
+        function GetData () {
+           return new Promise(function (resolve, reject) {
+                  resolve(dataSet);  
+           });
+        }
+        function Tree (obj) {
+            this.id = obj.id;
+            this.data = obj.data || null;
+            this.parentID = obj.parent && obj.parent.id || undefined;
+            this.children = [];
+        }
+        var TreeArr = [];
+        GetData().then(function(data){
+           data.forEach(function (dataSet) {
+               constructTree(dataSet);
+           });
+           PrintTree(GenerateTree(TreeArr));
+        });
+        function constructTree (data) {
+            var tree = new Tree(data);
+            TreeArr.push(tree);
+            if(data.parent) {
+                constructTree(data.parent);
+            }
+        }
+        function GenerateTree(treeArr) {
+            var hashObj = {};
+            treeArr.forEach(function (treeObj) {
+                hashObj[treeObj["id"]] = treeObj;
+            });
+            for(var key in hashObj)
+            {
+                var treeObj = hashObj[key];
+                if (treeObj.parentID in hashObj)
+                {
+                    hashObj[treeObj.parentID].children.push(treeObj);
+                }
+            }
+            for (var key in hashObj)
+            {
+                var treeObj = hashObj[key];
+                if (treeObj.parentID)
+                {
+                    delete hashObj[key];
+                }
+            }   
+            var finalTree = [];
+            for (var key in hashObj)
+            {
+                finalTree.push(hashObj[key]);
+            }
+            return finalTree;
+        }
+        function PrintTree (Tree) {
+            var _htmlStr1 = recurse(Tree);
+            var _htmlStr2 = makeMenu(Tree);
+            document.getElementById("container1").innerHTML = _htmlStr1;
+            document.getElementById("container2").innerHTML = _htmlStr2;
+        }
+        
+        function recurse( data ) {
+          var htmlRetStr = "<ul>"; 
+          for (var key in data) { 
+                if (typeof(data[key])== 'object' && data[key] != null) {
+                var x=key*1;		
+                if(isNaN(x)){
+                    htmlRetStr += "<li>" + key + ":<ul>";
+                    }
+                    htmlRetStr += recurse( data[key] );
+                    htmlRetStr += '</ul></li>';
+                } else {
+                    htmlRetStr += ("<li>" + key + ': &quot;' + data[key] + '&quot;</li  >' );
+                }
+          };
+          htmlRetStr += '</ul >';    
+          return( htmlRetStr );
+        }
+
+        function makeMenu(myregions) {
+            var html = "<ul class='regionlist'>";
+            myregions.forEach(function(val,key){
+                html += "\n<li>";
+                if (typeof val === "object" && val.children.length)
+                html +=  val.id +"\n" + makeMenu(val.children);
+                else
+                html += val.id;
+                html += "\n</li>";
+            });
+            html += "\n</ul>";
+            return html;
+        };
+        </script>
+</html>
